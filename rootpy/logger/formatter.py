@@ -5,6 +5,7 @@ to insert ANSI color codes.
 from __future__ import absolute_import
 
 import logging
+import sys
 
 __all__ = [
     'CustomFormatter',
@@ -37,7 +38,10 @@ COLORS = {
 
 class CustomFormatter(logging.Formatter):
     def __init__(self, fmt=remove_seqs(FORMAT), datefmt=None):
-        logging.Formatter.__init__(self, fmt, datefmt)
+        if sys.version_info[0] < 3 or (sys.version_info[0] == 3 and sys.version_info[1] < 2):
+            logging.Formatter.__init__(self, fmt, datefmt)
+        else:
+            logging.Formatter.__init__(self, fmt, datefmt, '{')
 
     def format(self, record):
         if not hasattr(record, "message"):
